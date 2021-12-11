@@ -1,3 +1,5 @@
 python-telegram-bot
 datetime
 pytube
+telebot
+youtube_dl
