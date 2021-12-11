@@ -14,6 +14,7 @@ help_command_response = "🔄Go through this video and learn how to use me\n\n"\
 
 down_error_help_response = f"\nRead Followings and try to troubleshoot your problem\n"\
                            f"○ Invalid link - Link may be broken\n"\
+                           f"○ Fault - Inline system failure\n"\
                            f"○ Download request failed - 'https://' is missing\n"\
                            f"○ Download request forced - 'You may not\n    entered link properly or completly mssing the\n    link\n"\
                            f"○ Download request denied - Probably your\n    trying video is a private video"
@@ -50,10 +51,10 @@ def time():
 
 def about():
     p = "ABOUT ME\n\n" \
-           "○ Creator : ภĮℙⓤ𝐧  \n"\
-           "○ Cloud : Github, Dispatcher cloud \n"\
-           "○ Language :Python 3 \n"\
-           "○ Library : Telegram-bot \n"\
+           f"○ Creator : ภĮℙⓤ𝐧 \n"\
+           "○ Cloud : Github, Heroku cloud \n"\
+           "○ Language : Python  \n"\
+           "○ Library : Telegram-bot-module \n"\
 
     return p
 def kill():
