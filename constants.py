@@ -1,2 +1,3 @@
-API_KEY = "2136569393:AAHj8Evb17MzK0zm08ix6JcmKMWreHDWE_w"
+API_KEY = "5074771406:AAEvikDUTwO6cb7zIzdMq6rcn5DdKXh5grY"
+default_video_quality = ''
 

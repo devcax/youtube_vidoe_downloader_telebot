@@ -7,7 +7,9 @@ start_command_response =   "Who am I \n\n" \
                            "📌 The Only thing you want to do is send me\n       your desired video link with the 'download'\n       prefix" \
                            "\neg:- download https://yourdesiredutubevideo.link\n\n" \
                            "👀Still don't know how to use me ok don't worry\n" \
-                           "/help click on this"
+                           "/help click on this\n\n"\
+                           "#telegram | #youtube | #download"
+
 
 help_command_response = "🔄Go through this video and learn how to use me\n\n"\
                         "#tutoroals | #telegram | #help"
