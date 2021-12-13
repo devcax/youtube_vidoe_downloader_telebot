@@ -4,3 +4,5 @@ pytube
 telebot
 youtube_dl
 requests
+python-math
+regex
