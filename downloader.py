@@ -69,20 +69,14 @@ def video_file_size(link,res='360p'):
 def validator(link):
     if 'youtu.be' in link.split('/'):
         link = f"{link.split('/')[0]}//www.youtube.com/watch?v={link.split('/')[3]}"
-        print(link)
-    x = re.search("^download.https://.*youtube.com.*watch", link)
-    if "download" in link.split():
-        try:
-            if link.split()[1]:
-                if x:
-                    return "Link accepted"
-                else:
-                    return "Invalied Link"
-        except IndexError:
-            return "Link is missing"
-
+    x = re.search("^https://.*youtube.com.*watch", link)
+    if x:
+        return "Link accepted"
+    elif re.search("^https://.", link) :
+        return "Oops! i'm curiously struggling with your link 😤😤, \nBecause it is not a *youtube* link"
     else:
-        return "'download' Prefix is misiing"
+        return "Oops! I'm blind on your message, I think it is not a link ☹️☹️\nProbably it would be a text"
+
 
 def get_resfor_eachquality(link):
     if 'youtu.be' in link.split('/'):
@@ -93,14 +87,12 @@ def get_resfor_eachquality(link):
     for i in res:
         try:
             size = video.streams.get_by_resolution(i).filesize_approx
+            size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+            i = int(math.floor(math.log(size, 1024)))
+            p = math.pow(1024, i)
+            s = round(size / p, 2)
+            quality.append(f"{s}{size_name[i]}")
         except:
             quality.append("not available")
             continue
-        if size == 0:
-            return "0B"
-        size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-        i = int(math.floor(math.log(size, 1024)))
-        p = math.pow(1024, i)
-        s = round(size / p, 2)
-        quality.append(f"{s}{size_name[i]}")
     return quality

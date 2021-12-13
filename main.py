@@ -4,6 +4,7 @@ from telegram.ext import * # main telegram module 2
 import response as r
 import constants as c
 import downloader
+import requests
 
 
 ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
@@ -137,76 +138,84 @@ def query_handler(update: Update, context: CallbackContext):
 def message_handler(update, context):
     text = str(update.message.text)
     if downloader.validator(text) == "Link accepted":
-
-        text = text.split()
-
-        update.message.reply_text("Link Accepted ✅\nWorking on it . . .", quote=True)
+        a = update.message.reply_text("Link Accepted ✅\nWorking on it . . .", quote=True)
+        get_resfor_eachquality = downloader.get_resfor_eachquality(text)
         keyboard = [
             [
-                InlineKeyboardButton(f"144p 🎬 ({downloader.get_resfor_eachquality(text[1])[0]})", callback_data='144p'),
-                InlineKeyboardButton(f"240p 🎬 ({downloader.get_resfor_eachquality(text[1])[1]})", callback_data='240p'),
-                InlineKeyboardButton(f"360p 🎬 ({downloader.get_resfor_eachquality(text[1])[2]})", callback_data='360p'),
+                InlineKeyboardButton(f"144p 🎬 ({get_resfor_eachquality[0]})", callback_data='144p'),
+                InlineKeyboardButton(f"240p 🎬 ({get_resfor_eachquality[1]})", callback_data='240p'),
             ],
             [
-                InlineKeyboardButton(f"480p 🎬 ({downloader.get_resfor_eachquality(text[1])[3]})", callback_data='480p'),
-                InlineKeyboardButton(f"720p 🎬 ({downloader.get_resfor_eachquality(text[1])[4]})", callback_data='720p'),
-                InlineKeyboardButton(f"1080p 🎬 ({downloader.get_resfor_eachquality(text[1])[5]})", callback_data='1080p'),
+                InlineKeyboardButton(f"360p 🎬 ({get_resfor_eachquality[2]})", callback_data='360p'),
+                InlineKeyboardButton(f"480p 🎬 ({get_resfor_eachquality[3]})", callback_data='480p'),
+
+            ],[
+                InlineKeyboardButton(f"720p 🎬 ({get_resfor_eachquality[4]})", callback_data='720p'),
+                InlineKeyboardButton(f"1080p 🎬 ({get_resfor_eachquality[5]})", callback_data='1080p'),
             ]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
-        update.message.reply_text("Choose a resolution at your own or default is 360p", reply_markup=reply_markup)
+        b = update.message.reply_text("Choose a resolution at your own or default is 360p", reply_markup=reply_markup)
         #Youtubevideo downloader start YOUTUBE_DL
 
         def download(link):
-
             downloadable_link = ''
             args = link
             cnt = 1
-            try:
-                with ydl:
+            #try:
+            with ydl:
                     result = ydl.extract_info(
                         args,
                         download=False  # We just want to extract the info
                     )
-                if 'entries' in result:
+            if 'entries' in result:
                     # Can be a playlist or a list of videos
                     video = result['entries'][0]
-                else:
+            else:
                     # if Just a video
                     video = result
 
-                for i in video['formats']:
+            for i in video['formats']:
                     link = f'Downloadable Link {cnt} :- '+'<a href=\"' + i['url'] + '\">' + 'Download ⬇️' + '</a>\n'
+
                     if i.get('format_note'):
 
                         if i['format_note'] == default_video_quality:
+                            if cnt == 1:
+                              t = update.message.reply_photo(downloader.tumbnail(args),caption='Downloading . . .')
                             downloadable_link += link
                             cnt += 1
 
                     else:
                         update.message.reply_text(link, parse_mode='HTML', disable_notification=True)
-                update.message.reply_photo(downloader.tumbnail(args),
-                                           caption=f"\nVideo Title :-  {downloader.video_title(args)}\n"
-                                                   f"👁‍🗨 Views :- {downloader.video_views(args)}\n"
-                                                   f"⛳️Length :- {downloader.video_length(args)}\n "
-                                                   f"🎥 File Size :- {downloader.video_file_size(args,default_video_quality)}\n"
-                                                   f"🔞 Age Restrictions :- {downloader.video_age(args)}\n"
-                                                   f"💡 Language :- en-us\n"
-                                                   f"🎬 Quality :- {query}\n"
-                                                   f"💿 Format :- webm/mp4\n"
-                                                   f"{downloadable_link}", parse_mode='HTML')
-                update.message.reply_text("❌🔆❌🔆❌🔆❌🔆❌🔆❌🔆❌🔆❌🔆❌🔆❌")
-                update.message.reply_text("Done ✅")
+
+            context.bot.edit_message_media(message_id=msg_id(t), chat_id=chat_id(t),
+                                           media = InputMediaPhoto(media=f'{t.photo[2].file_id}',
+                                                                   caption=f"\nVideo Title :-  {downloader.video_title(args)}\n"
+                                                                           f"👁‍🗨 Views :- {downloader.video_views(args)}\n"
+                                                                           f"⛳️Length :- {downloader.video_length(args)}\n "
+                                                                           f"🎥 File Size :- {downloader.video_file_size(args, default_video_quality)}\n"
+                                                                           f"🔞 Age Restrictions :- {downloader.video_age(args)}\n"
+                                                                           f"💡 Language :- en-us\n"
+                                                                           f"🎬 Quality :- {query}\n"
+                                                                           f"💿 Format :- webm/mp4\n"
+                                                                           f"{downloadable_link}", parse_mode='HTML'
+                                                                   )
+                                           )
+            update.message.reply_text("*Done ✅\n"
+                                      "#youtube | #bot | #download*",parse_mode= 'Markdown')
+            context.bot.deleteMessage(message_id=msg_id(a), chat_id=chat_id(a))
+            context.bot.deleteMessage(message_id=msg_id(b), chat_id=chat_id(b))
 
 
-            except:
-                update.message.reply_text('Error occurs while downloading  /download_error_help')
+            #except:
+              #  update.message.reply_text('Error occurs while downloading  /download_error_help')
             # Youtube video downloader end YOUTUBE_DL
 
-        download(text[1])
+        download(text)
     else:
-        update.message.reply_text(downloader.validator(text))
+        update.message.reply_text(f"{downloader.validator(text)}\n\n *URL* :- {text} ",parse_mode= 'Markdown')
 
 # query & message handlers end
 ###################################################################################################
