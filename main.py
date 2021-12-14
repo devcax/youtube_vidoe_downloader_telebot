@@ -191,7 +191,7 @@ def message_handler(update, context):
                         update.message.reply_text(link, parse_mode='HTML', disable_notification=True)
 
             context.bot.edit_message_media(message_id=msg_id(t), chat_id=chat_id(t),
-                                           media = InputMediaPhoto(media=f'{t.photo[2].file_id}',
+                                           media = InputMediaPhoto(media=f'{t.photo[1].file_id}',
                                                                    caption=f"\nVideo Title :-  {downloader.video_title(args)}\n"
                                                                            f"👁‍🗨 Views :- {downloader.video_views(args)}\n"
                                                                            f"⛳️Length :- {downloader.video_length(args)}\n "
@@ -203,6 +203,7 @@ def message_handler(update, context):
                                                                            f"{downloadable_link}", parse_mode='HTML'
                                                                    )
                                            )
+
             update.message.reply_text("*Done ✅\n"
                                       "#youtube | #bot | #download*",parse_mode= 'Markdown')
             context.bot.deleteMessage(message_id=msg_id(a), chat_id=chat_id(a))
