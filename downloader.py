@@ -2,7 +2,7 @@ from requests import *
 import pytube
 import re
 import math
-
+import youtube_dl
 
 def download_message1():
     return "Gathering Sketches ⚙"
@@ -53,18 +53,6 @@ def video_age(link):
         age = 'No restrictions available'
     return age
 
-def video_file_size(link,res='360p'):
-    if 'youtu.be' in link.split('/'):
-        link = f"{link.split('/')[0]}//www.youtube.com/watch?v={link.split('/')[3]}"
-    video = pytube.YouTube(link)
-    size = video.streams.get_by_resolution(res).filesize_approx
-    if size == 0:
-        return "0B"
-    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-    i = int(math.floor(math.log(size, 1024)))
-    p = math.pow(1024, i)
-    s = round(size / p, 2)
-    return "%s %s" % (s, size_name[i])
 
 def validator(link):
     if 'youtu.be' in link.split('/'):
@@ -78,21 +66,30 @@ def validator(link):
         return "Oops! I'm blind on your message, I think it is not a link ☹️☹️\nProbably it would be a text"
 
 
-def get_resfor_eachquality(link):
-    if 'youtu.be' in link.split('/'):
-        link = f"{link.split('/')[0]}//www.youtube.com/watch?v={link.split('/')[3]}"
-    video = pytube.YouTube(link)
-    res = ['144p','240p','360p','480p','720p','1080p']
-    quality = []
-    for i in res:
-        try:
-            size = video.streams.get_by_resolution(i).filesize_approx
-            size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-            i = int(math.floor(math.log(size, 1024)))
-            p = math.pow(1024, i)
+ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
+def quality_size(link):
+    args = link
+    cnt = 1
+    with ydl:
+        result = ydl.extract_info(
+            args,
+            download=False  # We just want to extract the info
+        )
+    if 'entries' in result:
+        # Can be a playlist or a list of videos
+        video = result['entries'][0]
+    else:
+        # if Just a video
+        video = result
+    l = []
+    t = []
+    for i in video['formats']:
+        if i['format_note'] not in l:
+            l.append(i['format_note'])
+            size = i['filesize']
+            size_name = ("B", "KB", "MB", "GB", "TB")
+            cal = int(math.floor(math.log(size, 1024)))
+            p = math.pow(1024, cal)
             s = round(size / p, 2)
-            quality.append(f"{s}{size_name[i]}")
-        except:
-            quality.append("not available")
-            continue
-    return quality
+            t.append(f"{s} {size_name[cal]}")
+    return l,t
