@@ -72,7 +72,7 @@ def quality_size(link):
 
     if 'entries' in result:
         # Can be a playlist or a list of videos
-        return 'playlist'
+        video = result['entries'][0]
     else:
         # if Just a video
         video = result

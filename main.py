@@ -68,14 +68,14 @@ def start_command(update,context):
     user_name = update.message.chat.first_name
     k = update.message.reply_text(f"*Hello {user_name}, how are you? Hope you are doing well💚💚 \nFirst thanks in advance for choosing me🤘🤘*",quote=True, parse_mode= 'Markdown')
     #res 1 with caption start command
-    update.message.reply_photo('AgACAgUAAxkBAAMaYbWZcWM1CyCumo-9vyrG71yI03QAAi6vMRu3GKlVNiefBUEPJwUBAAMCAANzAAMjBA', caption =f'*{r.start_command_response}*',parse_mode= 'Markdown')
+    update.message.reply_photo('AgACAgUAAxkBAAIDNWG95ogBDQg2CITsIkaoXgGdgwNDAAIurzEbtxipVb8Qb4Rx4qhwAQADAgADcwADIwQ', caption =f'*{r.start_command_response}*',parse_mode= 'Markdown')
 
 def help_command(update,context):
     # help text
     update.message.reply_text("*Ok i'll help you*", parse_mode= 'Markdown')
 
     # help video
-    update.message.reply_video("BAACAgUAAxkBAAMfYbWZsK32U9ppc_M3Kv6GnVGlEMQAAjwEAAJcGaBVJKwNfr5W3b0jBA",
+    update.message.reply_video("BAACAgUAAxkBAAIDMGG95isqmbX72f6YYVVM4qsicbqcAAI8BAACXBmgVWb01U3RoVBnIwQ",
                                caption=f'*{r.help_command_response}*',parse_mode= 'Markdown')
 
 def time(update, context):
@@ -213,29 +213,26 @@ def message_handler(update, context):
     text = str(update.message.text)
     if downloader.validator(text) == "Link accepted":
             a = update.message.reply_text("Link Accepted ✅\nWorking on it . . .", quote=True)
-            try:
-                quality,size = downloader.quality_size(text)
-                count = 0
-                keyboard = []
-                for z in quality:
-                        if count < len(quality)-1:
 
-                            keyboard.append([
+            quality,size = downloader.quality_size(text)
+            count = 0
+            keyboard = []
+            for z in quality:
+                    if count < len(quality)-1:
+                        keyboard.append([
                                     InlineKeyboardButton(f'{quality[count]} 🎬 ({size[count]})', callback_data=f'{quality[count]}'),
                                     InlineKeyboardButton(f'{quality[count + 1]} 🎬 ({size[count + 1]})', callback_data=f'{quality[count + 1]}'),
                                 ])
 
-                            count +=2
-                            continue
-                        break
+                        count +=2
+                        continue
+                    break
 
-                keyboard.append([InlineKeyboardButton('❌ Cancel Download ❌', callback_data='cancel')])
+            keyboard.append([InlineKeyboardButton('❌ Cancel Download ❌', callback_data='cancel')])
 
-                reply_markup = InlineKeyboardMarkup(keyboard)
-                b = update.message.reply_text("Choose a resolution ✨ ", reply_markup=reply_markup,parse_mode= 'Markdown')
-            except:
-                update.message.reply_text("Currently i'm not supporting for playlists 😞")
-                return
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            b = update.message.reply_text("Choose a resolution ✨ ", reply_markup=reply_markup,parse_mode= 'Markdown')
+
 
             '''
             update.message.reply_text("*Download Failed 🙁\n🔴 video duration too long \n            or \n"
