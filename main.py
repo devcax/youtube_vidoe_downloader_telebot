@@ -1,4 +1,5 @@
 import youtube_dl # to download and generate youtube downloader link
+import yt_dlp
 from telegram import * # main telegram module 1
 from telegram.ext import * # main telegram module 2
 import response as r
@@ -8,14 +9,14 @@ import downloader
 
 
 
-ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
+ydl = yt_dlp.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
 
 
 def download(link,update,context,default_video_quality):
     global a,b,size
     downloadable_link = ''
     args = link
-    cnt = l_cnt = 1
+    cnt = 1
     # try:
     with ydl:
         result = ydl.extract_info(
@@ -29,20 +30,18 @@ def download(link,update,context,default_video_quality):
         # if Just a video
         video = result
     for i in video['formats']:
-        link = f'Downloadable Link {l_cnt} :- ' + '<a href=\"' + i['url'] + '\">' + 'Download ⬇️' + '</a>\n'
+        link = f'Downloadable Link :- ' + '<a href=\"' + i['url'] + '\">' + 'Download ⬇️' + '</a>\n'
 
         if i.get('format_note'):
 
-            if i['format_note'] == default_video_quality:
+            if i['format_note'] == default_video_quality and i['acodec'] != 'none':
                 if cnt == 1:
                     t = update.message.reply_photo(downloader.tumbnail(args), caption='Downloading . . .')
-                if i['ext'] == 'mp4':
-                    downloadable_link += link
-                    l_cnt += 1
+                downloadable_link += link
                 cnt += 1
         else:
             update.message.reply_text(link, parse_mode='HTML', disable_notification=True)
-    q_dic = {'tiny': 0, '144p': 1, '240p': 2, '360p': 3, '480p': 4, '720p': 5, '1080p': 6, '1440p': 7, '2160p': 8}
+    q_dic = {'tiny': 0, '144p': 1, '240p': 2, '360p': 0, '480p': 4, '720p': 1, '1080p': 6, '1440p': 7, '2160p': 8}
     context.bot.edit_message_media(message_id=msg_id(t), chat_id=chat_id(t),
                                    media=InputMediaPhoto(media=f'{t.photo[1].file_id}',
                                                          caption=f"\nVideo Title :-  {downloader.video_title(args)}\n"
@@ -61,7 +60,6 @@ def download(link,update,context,default_video_quality):
                               "#youtube | #bot | #download*", parse_mode='Markdown')
     context.bot.deleteMessage(message_id=msg_id(a), chat_id=chat_id(a))
     context.bot.deleteMessage(message_id=msg_id(b), chat_id=chat_id(b))
-
 
 ###################################################################################################
 # command handlers
@@ -169,7 +167,7 @@ def msg_id(message):
 
 # query & message handlers
 def query_handler(update: Update, context: CallbackContext):
-    global text,updatee,contextt
+    global text,updatee,contextt,a
     query = update.callback_query.data
     if query == 'sin':
         update.callback_query.answer("Language switched to 'Sinhala'")
@@ -199,7 +197,13 @@ def query_handler(update: Update, context: CallbackContext):
         download(text, updatee, contextt, "1440p")
     elif query == '2160p':
         download(text, updatee, contextt, "2160p")
+    elif query == 'cancel':
+        update.callback_query.answer("Download Request Canceling . . .")
+        update.callback_query.delete_message()
+        contextt.bot.deleteMessage(message_id=msg_id(a), chat_id=chat_id(a))
+
     #print(query)
+
 
 
 def message_handler(update, context):
@@ -208,26 +212,35 @@ def message_handler(update, context):
     contextt = context
     text = str(update.message.text)
     if downloader.validator(text) == "Link accepted":
-        a = update.message.reply_text("Link Accepted ✅\nWorking on it . . .", quote=True)
-        try:
-            quality,size = downloader.quality_size(text)
-            count = 0
-            keyboard = []
-            for z in quality:
-                if count < len(quality)-1:
-                    keyboard.append([
-                    InlineKeyboardButton(f'{quality[count]} 🎬 ({size[count]})', callback_data=f'{quality[count]}'),
-                    InlineKeyboardButton(f'{quality[count + 1]} 🎬 ({size[count+1]})', callback_data=f'{quality[count+1]}'),
-                        ])
-                    count +=2
-                    continue
-                break
-            reply_markup = InlineKeyboardMarkup(keyboard)
+            a = update.message.reply_text("Link Accepted ✅\nWorking on it . . .", quote=True)
+            try:
+                quality,size = downloader.quality_size(text)
+                count = 0
+                keyboard = []
+                for z in quality:
+                        if count < len(quality)-1:
 
-            b = update.message.reply_text("Choose a resolution ✨ ", reply_markup=reply_markup)
-        except:
-            update.message.reply_text("*Download Failed 🙁\nvideo duration too long . . .* ",parse_mode= 'Markdown')
+                            keyboard.append([
+                                    InlineKeyboardButton(f'{quality[count]} 🎬 ({size[count]})', callback_data=f'{quality[count]}'),
+                                    InlineKeyboardButton(f'{quality[count + 1]} 🎬 ({size[count + 1]})', callback_data=f'{quality[count + 1]}'),
+                                ])
 
+                            count +=2
+                            continue
+                        break
+
+                keyboard.append([InlineKeyboardButton('❌ Cancel Download ❌', callback_data='cancel')])
+
+                reply_markup = InlineKeyboardMarkup(keyboard)
+                b = update.message.reply_text("Choose a resolution ✨ ", reply_markup=reply_markup,parse_mode= 'Markdown')
+            except:
+                update.message.reply_text("Currently i'm not supporting for playlists 😞")
+                return
+
+            '''
+            update.message.reply_text("*Download Failed 🙁\n🔴 video duration too long \n            or \n"
+                                          "🔴 a system corruption* ",parse_mode= 'Markdown')
+            '''
     else:
         update.message.reply_text(f"{downloader.validator(text)}\n\n *URL* :- {text} ",parse_mode= 'Markdown')
 

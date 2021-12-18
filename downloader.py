@@ -2,16 +2,7 @@ from requests import *
 import pytube
 import re
 import math
-import youtube_dl
-
-def download_message1():
-    return "Gathering Sketches ⚙"
-
-def download_message2():
-    return "Forwarding Request to the Youtube Server 📡"
-
-def  download_message3():
-    return "Downloading ⬇️. . . ."
+import yt_dlp as youtube_dl
 
 def tumbnail(link):
     if 'youtu.be' in link.split('/'):
@@ -68,28 +59,43 @@ def validator(link):
 
 ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
 def quality_size(link):
+
+
     args = link
     cnt = 1
+
     with ydl:
         result = ydl.extract_info(
             args,
             download=False  # We just want to extract the info
         )
+
     if 'entries' in result:
         # Can be a playlist or a list of videos
-        video = result['entries'][0]
+        return 'playlist'
     else:
         # if Just a video
         video = result
-    l = []
-    t = []
+    quality_list = []
+    size_list = []
     for i in video['formats']:
-        if i['format_note'] not in l:
-            l.append(i['format_note'])
-            size = i['filesize']
-            size_name = ("B", "KB", "MB", "GB", "TB")
-            cal = int(math.floor(math.log(size, 1024)))
-            p = math.pow(1024, cal)
-            s = round(size / p, 2)
-            t.append(f"{s} {size_name[cal]}")
-    return l,t
+
+            if i['format_note'] not in quality_list and i['ext'] == 'mp4' and i['acodec'] != 'none':
+
+                quality_list.append(i['format_note'])
+                try:
+                    size = i['filesize']
+                except:
+                    size = 'none'
+                if size != None:
+
+                    size_name = ("B", "KB", "MB", "GB", "TB")
+                    cal = int(math.floor(math.log(size, 1024)))
+                    p = math.pow(1024, cal)
+                    s = round(size / p, 2)
+                    size_list.append(f"{s} {size_name[cal]}")
+                else:
+                    size_list.append('null')
+    print(quality_list,size_list)
+    return quality_list,size_list
+
