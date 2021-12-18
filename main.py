@@ -1,4 +1,3 @@
-import youtube_dl # to download and generate youtube downloader link
 import yt_dlp
 from telegram import * # main telegram module 1
 from telegram.ext import * # main telegram module 2
