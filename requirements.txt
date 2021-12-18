@@ -2,7 +2,7 @@ python-telegram-bot
 datetime
 pytube
 telebot
-youtube_dl
+yt_dlp
 requests
 python-math
 regex
