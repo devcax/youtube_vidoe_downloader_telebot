@@ -96,6 +96,5 @@ def quality_size(link):
                     size_list.append(f"{s} {size_name[cal]}")
                 else:
                     size_list.append('null')
-    print(quality_list,size_list)
     return quality_list,size_list
 
