@@ -1,5 +1,5 @@
 
-# ![Logo](https://github.com/devcax/youtube_vidoe_downloader_telebot/blob/main/icon/bot.png) Youtube Video downloader telegram bot  
+# Youtube Video downloader telegram bot  
 
 Youtube video downloader telegram bot.
 
