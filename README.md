@@ -1,8 +1,7 @@
 
-# ![Logo](https://raw.githubusercontent.com/devcax/youtube_downloader/main/icons/icon.ico) Youtube Video downloader  
+# ![Logo](https://github.com/devcax/youtube_vidoe_downloader_telebot/blob/main/icon/bot.png) Youtube Video downloader telegram bot  
 
-
-A simple software with a simple GUI to donlowad the youtube videos. It also intergrated with a experimental AI modal which analize the relavant video and generate small summery about the video and then display it.
+Youtube video downloader telegram bot.
 
 ## Authors
 
@@ -12,8 +11,7 @@ A simple software with a simple GUI to donlowad the youtube videos. It also inte
 ## Features
 
 - Download youtube videos
-- Split audio and video output
-- Summary mode
+- History mode
 
 
 
