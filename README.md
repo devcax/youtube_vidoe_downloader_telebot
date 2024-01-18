@@ -1,12 +1,12 @@
 
-# [Logo](https://raw.githubusercontent.com/devcax/youtube_downloader/main/icons/icon.ico) Youtube Video downloader  !
+# ![Logo](https://raw.githubusercontent.com/devcax/youtube_downloader/main/icons/icon.ico) Youtube Video downloader  
 
 
 A simple software with a simple GUI to donlowad the youtube videos. It also intergrated with a experimental AI modal which analize the relavant video and generate small summery about the video and then display it.
 
-## Author
+## Authors
 
-- [@devcax](https://github.com/devcax)
+- [@devcax](https://www.github.com/octokatherine)
 
 
 ## Features
